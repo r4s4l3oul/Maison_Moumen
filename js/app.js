@@ -450,6 +450,74 @@ function initSearchToggle() {
 }
 
 /**
+ * Ouvre les collections au survol et laisse le temps d'atteindre le sous-menu.
+ */
+function initCollectionMenuHover() {
+  const closeDelay = 220;
+  const dropdowns = document.querySelectorAll(".nav-dropdown");
+
+  dropdowns.forEach((dropdown) => {
+    const trigger = dropdown.querySelector(".collections-trigger");
+    const menu = dropdown.querySelector(".dropdown-menu");
+    const header = dropdown.closest(".header-inner");
+
+    if (!trigger || !menu) {
+      return;
+    }
+
+    let closeTimer;
+
+    function positionMenu() {
+      if (!header) {
+        return;
+      }
+
+      const headerRect = header.getBoundingClientRect();
+      const triggerRect = trigger.getBoundingClientRect();
+
+      menu.style.left = `${triggerRect.left - headerRect.left}px`;
+    }
+
+    function openMenu() {
+      window.clearTimeout(closeTimer);
+      positionMenu();
+      dropdown.classList.add("is-open");
+      trigger.setAttribute("aria-expanded", "true");
+    }
+
+    function closeMenuSoon() {
+      window.clearTimeout(closeTimer);
+      closeTimer = window.setTimeout(() => {
+        dropdown.classList.remove("is-open");
+        trigger.setAttribute("aria-expanded", "false");
+      }, closeDelay);
+    }
+
+    dropdown.addEventListener("mouseenter", openMenu);
+    dropdown.addEventListener("mouseleave", closeMenuSoon);
+    menu.addEventListener("mouseenter", openMenu);
+    menu.addEventListener("mouseleave", closeMenuSoon);
+    dropdown.addEventListener("focusin", openMenu);
+    dropdown.addEventListener("focusout", (event) => {
+      if (!dropdown.contains(event.relatedTarget)) {
+        closeMenuSoon();
+      }
+    });
+    window.addEventListener("resize", positionMenu);
+
+    trigger.addEventListener("click", () => {
+      if (!window.matchMedia("(pointer: fine)").matches) {
+        if (dropdown.classList.contains("is-open")) {
+          closeMenuSoon();
+        } else {
+          openMenu();
+        }
+      }
+    });
+  });
+}
+
+/**
  * Initialise toutes les fonctionnalités de la page.
  */
 function init() {
@@ -458,6 +526,7 @@ function init() {
   initTestimonialGallery();
   initContactForm();
   initSearchToggle();
+  initCollectionMenuHover();
 }
 
 init();
