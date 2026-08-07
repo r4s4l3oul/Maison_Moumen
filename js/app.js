@@ -380,12 +380,50 @@ function initTestimonialGallery() {
 }
 
 /**
+ * Prépare un e-mail depuis le formulaire de contact.
+ * À remplacer par un envoi vers un backend ou un service de formulaires
+ * lorsque l'adresse professionnelle sera disponible.
+ */
+function initContactForm() {
+  const form = document.getElementById("contact-form");
+  const status = document.getElementById("contact-form-status");
+
+  if (!form || !status) {
+    return;
+  }
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const formData = new FormData(form);
+    const name = formData.get("name");
+    const email = formData.get("email");
+    const subject = formData.get("subject");
+    const message = formData.get("message");
+    const recipient = "bonjour@maison-moumen.example";
+    const mailSubject = `[Maison Moumen] ${subject}`;
+    const mailBody = `Nom : ${name}\nE-mail : ${email}\n\nMessage :\n${message}`;
+
+    status.textContent = "Votre application de messagerie va s’ouvrir avec le message prérempli.";
+    window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(
+      mailSubject
+    )}&body=${encodeURIComponent(mailBody)}`;
+  });
+}
+
+/**
  * Initialise toutes les fonctionnalités de la page.
  */
 function init() {
   renderProducts(products);
   initProductImageHover();
   initTestimonialGallery();
+  initContactForm();
 }
 
 init();
