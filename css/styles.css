@@ -290,6 +290,7 @@ a {
 .primary-nav a:focus-visible,
 .nav-dropdown summary:focus-visible,
 .header-actions a:focus-visible,
+.search-toggle:focus-visible,
 .gallery-nav:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 3px;
@@ -364,6 +365,64 @@ a {
 .header-actions a:hover {
   color: var(--gold);
   transform: translateY(-1px);
+}
+
+.search-toggle {
+  min-height: 44px;
+  padding: 0;
+
+  display: inline-flex;
+  align-items: center;
+
+  color: rgba(243, 240, 234, 0.94);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.search-toggle:hover {
+  color: var(--gold);
+  transform: translateY(-1px);
+}
+
+.site-search {
+  width: 0;
+  margin: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(0.75rem);
+  transition:
+    width 0.25s ease,
+    opacity 0.2s ease,
+    transform 0.25s ease;
+}
+
+.site-search.is-open {
+  width: clamp(10rem, 22vw, 16rem);
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0);
+}
+
+.site-search-input {
+  width: 100%;
+  min-height: 40px;
+  padding: 0.55rem 0.75rem;
+
+  color: #17120d;
+  background: #fffdf9;
+  border: 1px solid rgba(248, 209, 142, 0.85);
+  border-radius: 999px;
+}
+
+.site-search-input:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }
 
 /* Hero */

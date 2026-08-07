@@ -37,7 +37,28 @@
         </nav>
 
         <div class="header-actions">
-          <a class="text-link" href="#search">Recherche</a>
+          <form class="site-search" id="site-search" role="search">
+            <label class="visually-hidden" for="site-search-input">
+              Rechercher une pièce
+            </label>
+            <input
+              class="site-search-input"
+              id="site-search-input"
+              name="q"
+              type="search"
+              placeholder="Rechercher une pièce"
+              autocomplete="off"
+            />
+          </form>
+          <button
+            class="search-toggle"
+            id="search-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="site-search"
+          >
+            Recherche
+          </button>
           <a class="text-link" href="#cart">Panier</a>
         </div>
       </div>

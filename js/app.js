@@ -417,6 +417,39 @@ function initContactForm() {
 }
 
 /**
+ * Ouvre et referme le champ de recherche de l'en-tête.
+ */
+function initSearchToggle() {
+  const searchForm = document.getElementById("site-search");
+  const toggle = document.getElementById("search-toggle");
+  const input = document.getElementById("site-search-input");
+
+  if (!searchForm || !toggle || !input) {
+    return;
+  }
+
+  function setSearchOpen(isOpen) {
+    searchForm.classList.toggle("is-open", isOpen);
+    toggle.setAttribute("aria-expanded", String(isOpen));
+
+    if (isOpen) {
+      requestAnimationFrame(() => input.focus());
+    }
+  }
+
+  toggle.addEventListener("click", () => {
+    setSearchOpen(!searchForm.classList.contains("is-open"));
+  });
+
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      setSearchOpen(false);
+      toggle.focus();
+    }
+  });
+}
+
+/**
  * Initialise toutes les fonctionnalités de la page.
  */
 function init() {
@@ -424,6 +457,7 @@ function init() {
   initProductImageHover();
   initTestimonialGallery();
   initContactForm();
+  initSearchToggle();
 }
 
 init();
