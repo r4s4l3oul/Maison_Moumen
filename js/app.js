@@ -518,6 +518,107 @@ function initCollectionMenuHover() {
 }
 
 /**
+ * Relie les modèles des services au formulaire et prépare la demande par e-mail.
+ */
+function initServiceRequestForm() {
+  const form = document.getElementById("service-request-form");
+
+  if (!form) {
+    return;
+  }
+
+  const serviceSelect = form.querySelector("#service-type");
+  const modelInput = form.querySelector("#service-model");
+  const dateInput = form.querySelector("#appointment-date");
+  const fabricFieldset = form.querySelector(".fabric-fieldset");
+  const status = form.querySelector("#service-form-status");
+  const selectionButtons = document.querySelectorAll(".service-select-button");
+
+  if (
+    !serviceSelect ||
+    !modelInput ||
+    !dateInput ||
+    !fabricFieldset ||
+    !status
+  ) {
+    return;
+  }
+
+  const today = new Date();
+  const localToday = new Date(
+    today.getTime() - today.getTimezoneOffset() * 60 * 1000
+  );
+
+  dateInput.min = localToday.toISOString().split("T")[0];
+
+  function updateFabricVisibility() {
+    const isBespoke = serviceSelect.value === "Sur mesure";
+
+    fabricFieldset.hidden = !isBespoke;
+    fabricFieldset.querySelectorAll("input").forEach((input) => {
+      input.disabled = !isBespoke;
+    });
+  }
+
+  serviceSelect.addEventListener("change", updateFabricVisibility);
+
+  selectionButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      serviceSelect.value = button.dataset.serviceChoice || "Sur mesure";
+      modelInput.value = button.dataset.modelChoice || "";
+      updateFabricVisibility();
+      form.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.setTimeout(() => dateInput.focus(), 450);
+    });
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const appointmentDate = new Date(`${dateInput.value}T12:00:00`);
+    const appointmentDay = appointmentDate.getDay();
+
+    if (appointmentDay === 0 || appointmentDay === 1) {
+      status.textContent = "Merci de choisir une date du mardi au samedi.";
+      dateInput.focus();
+      return;
+    }
+
+    const formData = new FormData(form);
+    const service = formData.get("service");
+    const model = formData.get("model") || "À définir ensemble";
+    const fabric = formData.get("fabric") || "Non applicable";
+    const notes = formData.get("notes") || "Aucune précision";
+    const recipient = "bonjour@maison-moumen.example";
+    const subject = `[Maison Moumen] Demande ${service}`;
+    const body = [
+      `Nom : ${formData.get("name")}`,
+      `E-mail : ${formData.get("email")}`,
+      `Téléphone : ${formData.get("phone")}`,
+      `Service : ${service}`,
+      `Modèle : ${model}`,
+      `Tissu : ${fabric}`,
+      `Date souhaitée : ${formData.get("date")}`,
+      `Créneau : ${formData.get("time")}`,
+      "",
+      `Précisions : ${notes}`,
+    ].join("\n");
+
+    status.textContent = "Votre messagerie va s'ouvrir avec la demande préremplie.";
+    window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`;
+  });
+
+  updateFabricVisibility();
+}
+
+/**
  * Initialise toutes les fonctionnalités de la page.
  */
 function init() {
@@ -527,6 +628,7 @@ function init() {
   initContactForm();
   initSearchToggle();
   initCollectionMenuHover();
+  initServiceRequestForm();
 }
 
 init();
