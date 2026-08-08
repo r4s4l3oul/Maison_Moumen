@@ -1,4 +1,4 @@
-﻿# Maison Moumen — Socle HTML/CSS/JS natif
+﻿# Caftan Moumen — Socle HTML/CSS/JS natif
 
 Ce projet a été réinitialisé pour utiliser uniquement du HTML, CSS et JavaScript natifs.
 
